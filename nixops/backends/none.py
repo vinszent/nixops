@@ -51,7 +51,7 @@ class NoneState(MachineState):
     def create(self, defn, check, allow_reboot, allow_recreate):
         assert isinstance(defn, NoneDefinition)
         self.set_common_state(defn)
-        self.log_start("vsz " + self.target_host)
+        self.log_start("vsz " + str(defn))
         self.target_host = defn._target_host
         self.public_ipv4 = defn._public_ipv4
 
