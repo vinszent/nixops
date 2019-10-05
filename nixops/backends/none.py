@@ -30,9 +30,10 @@ class NoneState(MachineState):
 
     target_host = nixops.util.attr_property("targetHost", None)
     public_ipv4 = nixops.util.attr_property("publicIpv4", None)
-    _ssh_private_key = attr_property("none.sshPrivateKey", None)
-    _ssh_public_key = attr_property("none.sshPublicKey", None)
+    _ssh_private_key = nixops.util.attr_property("none.sshPrivateKey", None)
+    _ssh_public_key = nixops.util.attr_property("none.sshPublicKey", None)
     _ssh_public_key_deployed = attr_property("none.sshPublicKeyDeployed", False, bool)
+    testarst = nixops.util.attr_property("sshPrivateKey", None)
 
     def __init__(self, depl, name, id):
         MachineState.__init__(self, depl, name, id)
@@ -50,12 +51,13 @@ class NoneState(MachineState):
     def create(self, defn, check, allow_reboot, allow_recreate):
         assert isinstance(defn, NoneDefinition)
         self.set_common_state(defn)
+        self.log_start("vsz " + self.target_host)
         self.target_host = defn._target_host
         self.public_ipv4 = defn._public_ipv4
 
         if not self.vm_id:
             if self._ssh_private_key is None or self._ssh_public_key is None:
-                self.log_start("generating new SSH keypair... " + str(self._ssh_private_key) + " " + str(self._ssh_public_key) + " " + str(self.target_host))
+                self.log_start("generating new SSH keypair... " + str(self._ssh_private_key) + " " + str(self._ssh_public_key) + " " + str(self.target_host) + " " + str(self.test))
                 key_name = "NixOps client key for {0}".format(self.name)
                 self._ssh_private_key, self._ssh_public_key = \
                     create_key_pair(key_name=key_name)
