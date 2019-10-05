@@ -54,11 +54,12 @@ class NoneState(MachineState):
         self.public_ipv4 = defn._public_ipv4
 
         if not self.vm_id:
-            self.log_start("generating new SSH keypair... ")
-            key_name = "NixOps client key for {0}".format(self.name)
-            self._ssh_private_key, self._ssh_public_key = \
-                create_key_pair(key_name=key_name)
-            self.log_end("done")
+            if self._ssh_private_key is None or self._ssh_public_key is None:
+                self.log_start("generating new SSH keypair... ")
+                key_name = "NixOps client key for {0}".format(self.name)
+                self._ssh_private_key, self._ssh_public_key = \
+                    create_key_pair(key_name=key_name)
+                self.log_end("done")
             self.vm_id = "nixops-{0}-{1}".format(self.depl.uuid, self.name)
 
     def switch_to_configuration(self, method, sync, command=None):
